@@ -122,18 +122,6 @@ import RootLayout from '@layouts/root-layout.astro';
 					找到我
 				</h2>
 				<div class='flex flex-row gap-6 flex-wrap'>
-					<a
-						href='https://twitter.com/JesseLin739072'
-						target='_blank'
-						class='text-xl font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:underline underline-offset-2 transition-colors'>
-						Twitter
-					</a>
-					<a
-						href='https://github.com/JesseLinDev'
-						target='_blank'
-						class='text-xl font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:underline underline-offset-2 transition-colors'>
-						GitHub
-					</a>
 					{
 						socialLinks.map((link) => (
 							<a
@@ -252,7 +240,7 @@ import RootLayout from '@layouts/root-layout.astro';
 								const url = window.URL.createObjectURL(blob);
 								const a = document.createElement('a');
 								a.href = url;
-								a.download = 'sanju-sivalingam-headshot.jpg';
+								a.download = 'jesse-lin-headshot.jpg';
 								document.body.appendChild(a);
 								a.click();
 								document.body.removeChild(a);
@@ -261,7 +249,7 @@ import RootLayout from '@layouts/root-layout.astro';
 								// Fallback: try direct download if canvas fails
 								const a = document.createElement('a');
 								a.href = imageUrl;
-								a.download = 'sanju-sivalingam-headshot.jpg';
+								a.download = 'jesse-lin-headshot.jpg';
 								a.target = '_blank';
 								document.body.appendChild(a);
 								a.click();

@@ -9,12 +9,26 @@ interface Props {
 	index: number;
 	slug: string;
 	title: string;
+	customSlug?: string;
+	customColor?: string;
 }
 
-const { category, content, pubDate, index, slug, title } = Astro.props;
+const { category, content, pubDate, index, slug, title, customSlug, customColor } = Astro.props;
 
-// 根据标题识别三个人格
-const identifyPersona = (title: string) => {
+// 根据标题或frontmatter识别三个人格
+const identifyPersona = (title: string, personaKey?: string) => {
+	// 如果frontmatter提供了persona，优先使用
+	if (personaKey) {
+		if (personaKey === 'linji') {
+			return { name: 'Lin', fullName: '林霁', color: 'bg-blue-100 dark:bg-blue-900/30 border-blue-300', accent: 'text-blue-600' };
+		} else if (personaKey === 'chenran') {
+			return { name: 'Chenran', fullName: '陈然', color: 'bg-purple-100 dark:bg-purple-900/30 border-purple-300', accent: 'text-purple-600' };
+		} else if (personaKey === 'suyu') {
+			return { name: 'Suyu', fullName: '苏雨', color: 'bg-pink-100 dark:bg-pink-900/30 border-pink-300', accent: 'text-pink-600' };
+		}
+	}
+	
+	// 回退到标题关键词识别
 	if (title.includes('林霁') || title.includes('山中无甲子') || title.includes('思考') || title.includes('边界')) {
 		return { name: 'Lin', fullName: '林霁', color: 'bg-blue-100 dark:bg-blue-900/30 border-blue-300', accent: 'text-blue-600' };
 	} else if (title.includes('陈然') || title.includes('技术') || title.includes('分析') || title.includes('逻辑')) {
@@ -27,9 +41,12 @@ const identifyPersona = (title: string) => {
 };
 
 const persona = identifyPersona(title);
+
+// 使用自定义color或persona识别的color
+const finalColor = customColor || persona.color;
 ---
 
-<a href={`/${slug}`}>
+<a href={`/${customSlug || slug}`}>
 	<article
 		id={category}
 		class={clsx(

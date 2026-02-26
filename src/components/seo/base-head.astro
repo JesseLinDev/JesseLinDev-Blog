@@ -21,12 +21,12 @@ const {
 	type = 'website',
 	publishedTime,
 	modifiedTime,
-	author = 'Sanju Sivalingam',
+	author = 'Jesse Lin',
 } = Astro.props;
 
 const resolvedImage = new URL(image, Astro.url);
 const isHome = Astro.url.pathname === '/';
-const fullTitle = isHome ? title : `${title} | sanju`;
+const fullTitle = isHome ? title : `${title} | Jesse Lin`;
 ---
 
 <!-- Theme detection (before paint) -->
@@ -163,12 +163,12 @@ const fullTitle = isHome ? title : `${title} | sanju`;
 		"description": description,
 		"author": {
 			"@type": "Person",
-			"name": "Sanju Sivalingam",
+			"name": "Jesse Lin",
 			"url": Astro.site?.toString(),
 			"sameAs": [
-				"https://x.com/spikeysanju",
-				"https://github.com/spikeysanju",
-				"https://www.linkedin.com/in/imsanju"
+				"https://x.com/JesseLinDev",
+				"https://github.com/JesseLinDev",
+				"https://www.linkedin.com/in/jesselin"
 			]
 		}
 	})} />
@@ -184,12 +184,12 @@ const fullTitle = isHome ? title : `${title} | sanju`;
 		"dateModified": (modifiedTime ?? publishedTime)?.toISOString(),
 		"author": {
 			"@type": "Person",
-			"name": "Sanju Sivalingam",
+			"name": "Jesse Lin",
 			"url": Astro.site?.toString()
 		},
 		"publisher": {
 			"@type": "Person",
-			"name": "Sanju Sivalingam",
+			"name": "Jesse Lin",
 			"url": Astro.site?.toString()
 		},
 		"mainEntityOfPage": {
