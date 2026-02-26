@@ -1,0 +1,53 @@
+---
+import WritingLayout from '@layouts/writing-layout.astro';
+import ThoughtsLayout from '@layouts/thoughts-layout.astro';
+import { ScrollProgress } from '@components/misc';
+import { getCollection } from 'astro:content';
+import { getReadingTime } from '@utils/index';
+
+// 生成所有可能的静态路径
+export async function getStaticPaths() {
+	const writings = await getCollection('writing');
+	const thoughts = await getCollection('thought');
+	
+	const paths = [];
+	
+	for (const writing of writings) {
+		paths.push({ params: { slug: writing.slug } });
+	}
+	
+	for (const thought of thoughts) {
+		paths.push({ params: { slug: thought.slug } });
+	}
+	
+	return paths;
+}
+
+const { slug } = Astro.params;
+
+const writings = await getCollection('writing');
+const thoughts = await getCollection('thought');
+
+const writing = writings.find((p) => p.slug === slug);
+const thought = thoughts.find((p) => p.slug === slug);
+
+if (!writing && !thought) return Astro.redirect('/404');
+
+const post = writing ?? thought;
+const { Content } = await post!.render();
+const readingTime = getReadingTime(post!.body);
+const heroImage = writing ? (writing.data.heroImage || `/og/writings/${slug}`) : undefined;
+const ogImage = thought ? `/og/thoughts/${slug}` : undefined;
+---
+
+{writing ? (
+	<WritingLayout {...writing.data} heroImage={heroImage!} readingTime={readingTime}>
+		<Content />
+		<ScrollProgress />
+	</WritingLayout>
+) : thought ? (
+	<ThoughtsLayout {...thought.data} ogImage={ogImage!} readingTime={readingTime}>
+		<Content />
+		<ScrollProgress />
+	</ThoughtsLayout>
+) : null}

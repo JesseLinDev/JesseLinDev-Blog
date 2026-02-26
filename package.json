@@ -1,0 +1,30 @@
+{
+	"name": "them-selv-es",
+	"type": "module",
+	"version": "1.0.0",
+	"scripts": {
+		"dev": "astro dev",
+		"start": "astro dev",
+		"build": "astro check && astro build",
+		"preview": "astro preview",
+		"astro": "astro",
+		"check": "biome check ./src",
+		"lint": "biome lint ./src",
+		"format": "biome format --write ."
+	},
+	"dependencies": {
+		"@astrojs/check": "^0.5.10",
+		"@astrojs/mdx": "^2.3.1",
+		"@astrojs/rss": "^4.0.15",
+		"@astrojs/sitemap": "^3.7.0",
+		"@astrojs/tailwind": "^5.1.5",
+		"@resvg/resvg-wasm": "^2.6.2",
+		"astro": "^4.16.19",
+		"tailwindcss": "^3.4.19",
+		"typescript": "^5.9.3"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.7.2",
+		"@tailwindcss/typography": "^0.5.19"
+	}
+}
