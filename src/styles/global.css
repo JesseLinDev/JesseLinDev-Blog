@@ -99,7 +99,7 @@
   body {
     font-family: var(--font-body);
     font-weight: var(--fw-medium);
-    @apply bg-white text-black dark:bg-black dark:text-white lowercase;
+    @apply bg-white text-black dark:bg-black dark:text-white;
   }
 
   h1, h2, h3, h4, h5, h6 {

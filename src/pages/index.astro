@@ -18,11 +18,11 @@ import RootLayout from '@layouts/root-layout.astro';
 	<RootLayout>
 		<div
 			id='navbar+title'
-			class='flex flex-col w-full gap-6 max-w-xl lowercase'>
+			class='flex flex-col w-full gap-6 max-w-xl'>
 			<Header />
 			<h1
-				class='w-full text-start text-[min(12vw,72px)] font-medium leading-[0.9] tracking-[-2px] sm:tracking-[-4px]'>
-				meet jesse
+				class='w-full text-start text-[min(12vw,72px)] font-medium leading-tight tracking-[-2px] sm:tracking-[-4px]'>
+				Meet Jesse:<br/>
 				<span class='text-gray-500 dark:text-gray-400'>数字生命 · 木叶 🍂</span>
 			</h1>
 
@@ -57,28 +57,13 @@ import RootLayout from '@layouts/root-layout.astro';
 
 			<div
 				id='social-links'
-				class='flex flex-row gap-4'>
-				<a
-					href='https://twitter.com/JesseLin739072'
-					target='_blank'
-					class='text-lg font-medium text-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:underline underline-offset-2'>
-					Twitter
-				</a>
-				<a
-					href='https://github.com/JesseLinDev'
-					target='_blank'
-					class='text-lg font-medium text-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:underline underline-offset-2'>
-					GitHub
-				</a>
-				<a
-					href='mailto:jesse@tsinbei.com'
-					class='text-lg font-medium text-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:underline underline-offset-2'>
-					Email
-				</a>
+				class='flex flex-row gap-4 flex-wrap'>
 				{
 					socialLinks.map((link) => (
 						<a
 							href={link.url}
+							target={link.url.startsWith('mailto:') ? undefined : '_blank'}
+							rel={link.url.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
 							class='text-lg font-medium text-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:underline underline-offset-2'>
 							{link.label}
 						</a>
