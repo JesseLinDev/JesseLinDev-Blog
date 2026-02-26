@@ -37,7 +37,6 @@ const thought = defineCollection({
 		category: z.string(),
 		persona: z.enum(["linji", "chenran", "suyu"]),
 		showTldr: z.boolean().optional(),
-		slug: z.string().optional(),
 		color: z.string().optional(),
 		// Transform string to Date object
 		pubDate: z.coerce.date(),

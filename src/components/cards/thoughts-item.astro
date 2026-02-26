@@ -1,6 +1,6 @@
 ---
 import FormattedDate from '@components/misc/formatted-date.astro';
-import { clsx, getCategoryColor } from '@utils/index';
+import { clsx } from '@utils/index';
 
 interface Props {
 	category: string;
@@ -9,13 +9,15 @@ interface Props {
 	index: number;
 	slug: string;
 	title: string;
-	customSlug?: string;
-	customColor?: string;
+	opts?: {
+		persona?: string;
+		color?: string;
+	};
 }
 
-const { category, content, pubDate, index, slug, title, customSlug, customColor } = Astro.props;
+const { category, content, pubDate, index, slug, title, opts } = Astro.props;
 
-// 根据标题或frontmatter识别三个人格
+// 根据标题、persona或frontmatter识别三个人格
 const identifyPersona = (title: string, personaKey?: string) => {
 	// 如果frontmatter提供了persona，优先使用
 	if (personaKey) {
@@ -40,18 +42,16 @@ const identifyPersona = (title: string, personaKey?: string) => {
 	return { name: 'Lin', fullName: '林霁', color: 'bg-blue-100 dark:bg-blue-900/30 border-blue-300', accent: 'text-blue-600' };
 };
 
-const persona = identifyPersona(title);
-
-// 使用自定义color或persona识别的color
-const finalColor = customColor || persona.color;
+const persona = identifyPersona(title, opts?.persona);
+const finalColor = opts?.color || persona.color;
 ---
 
-<a href={`/${customSlug || slug}`}>
+<a href={`/${slug}`}>
 	<article
 		id={category}
 		class={clsx(
 			'flex flex-col w-full items-center justify-between gap-3 p-6 relative transition-all duration-75 ease-in-out border-2',
-			persona.color,
+			finalColor,
 			index % 2 === 0 ? 'rotate-1 hover:rotate-0' : '-rotate-1 hover:-rotate-0'
 		)}>
 		<span class='absolute top-3 right-3 text-5xl text-gray-700'>"</span>

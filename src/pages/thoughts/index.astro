@@ -34,8 +34,10 @@ const thoughts = (await getCollection("thought")).sort(
 						pubDate={thought.data.pubDate}
 						slug={thought.slug}
 						title={thought.data.title}
-						customSlug={thought.data.slug || undefined}
-						customColor={thought.data.color || undefined}
+						opts={{
+							persona: thought.data.persona || undefined,
+							color: thought.data.color || undefined
+						}}
 					/>
 				))
 			}
