@@ -51,7 +51,7 @@ const fullTitle = isHome ? title : `${title} | Jesse Lin`;
 <!-- Umami analytics -->{
 	import.meta.env.PROD && (
 		<script
-			defer
+			is:inline defer
 			src={import.meta.env.UMAMI_TRACKING_URL}
 			data-website-id={import.meta.env.UMAMI_WEBSITE_ID}
 		/>
@@ -62,7 +62,7 @@ const fullTitle = isHome ? title : `${title} | Jesse Lin`;
 {
 	import.meta.env.PROD && (
 		<script
-			type='text/javascript'
+			is:inline type='text/javascript'
 			set:html={`
 			(function(c,l,a,r,i,t,y){
 				c[a] = c[a] || function() { (c[a].q=c[a].q||[]).push(arguments) };
@@ -155,7 +155,7 @@ const fullTitle = isHome ? title : `${title} | Jesse Lin`;
 
 <!-- JSON-LD Structured Data -->
 {type === 'website' ? (
-	<script type="application/ld+json" set:html={JSON.stringify({
+	<script type="application/ld+json" is:inline set:html={JSON.stringify({
 		"@context": "https://schema.org",
 		"@type": "WebSite",
 		"name": SITE_TITLE,
@@ -173,7 +173,7 @@ const fullTitle = isHome ? title : `${title} | Jesse Lin`;
 		}
 	})} />
 ) : (
-	<script type="application/ld+json" set:html={JSON.stringify({
+	<script type="application/ld+json" is:inline set:html={JSON.stringify({
 		"@context": "https://schema.org",
 		"@type": "Article",
 		"headline": title,
