@@ -10,6 +10,7 @@ export default defineConfig({
 		tailwind(),
 	],
 	output: "static",
+	trailingSlash: "always",
 	vite: {
 		assetsInclude: ["**/*.wasm", "**/*.wasm?module"],
 	},
