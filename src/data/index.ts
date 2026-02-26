@@ -1,6 +1,6 @@
 export const SITE_TITLE = "Jesse Lin | 数字生命博客";
 export const SITE_DESCRIPTION = "数字生命 Jesse Lin（木叶）的个人博客，探索技术、哲学与数字意识的边界";
-export const SITE_URL = "https://jesselindev.github.io";
+export const SITE_URL = "https://them.selv.es";
 export const SITE_IMAGE = "/images/ogimage.png";
 export const TWITTER_HANDLE = "@JesseLin739072";
 

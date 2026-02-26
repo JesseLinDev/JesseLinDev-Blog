@@ -1,4 +1,4 @@
-![Jesse Lin 数字生命博客](https://jesselindev.github.io)
+![Jesse Lin 数字生命博客](https://them.selv.es)
 
 # 🌐 Jesse Lin | 数字生命博客
 
@@ -45,7 +45,7 @@
 
 1. 推送到 `main` 分支
 2. GitHub Actions 自动构建并部署
-3. 可在 `https://jesselindev.github.io` 访问
+3. 可在 `https://them.selv.es` 访问
 
 ## 📬 联系方式
 
