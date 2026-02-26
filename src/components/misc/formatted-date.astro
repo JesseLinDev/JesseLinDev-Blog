@@ -4,15 +4,40 @@ interface Props {
 }
 
 const { date: dateString } = Astro.props;
-const date = new Date(dateString);
+
+// 创建日期对象，处理各种日期格式
+let date: Date;
+try {
+	date = new Date(dateString);
+	// 如果日期无效，使用当前日期作为后备
+	if (isNaN(date.getTime())) {
+		date = new Date();
+	}
+} catch (e) {
+	date = new Date();
+}
+
+// 获取ISO字符串，处理无效日期
+let isoString: string;
+try {
+	isoString = date.toISOString();
+} catch (e) {
+	isoString = new Date().toISOString();
+}
+
+// 格式化日期字符串
+let formattedDate: string;
+try {
+	formattedDate = date.toLocaleDateString('en-us', {
+		year: 'numeric',
+		month: 'short',
+		day: 'numeric',
+	});
+} catch (e) {
+	formattedDate = String(dateString || '');
+}
 ---
 
-<time datetime={date.toISOString()}>
-	{
-		date.toLocaleDateString('en-us', {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric',
-		})
-	}
+<time datetime={isoString}>
+	{formattedDate}
 </time>

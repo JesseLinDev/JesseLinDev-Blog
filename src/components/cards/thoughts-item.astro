@@ -2,10 +2,19 @@
 import FormattedDate from '@components/misc/formatted-date.astro';
 import { clsx, getCategoryColor } from '@utils/index';
 
+interface Props {
+	category: string;
+	content: string;
+	pubDate: Date;
+	index: number;
+	slug: string;
+	title: string;
+}
+
 const { category, content, pubDate, index, slug, title } = Astro.props;
 
 // 根据标题识别三个人格
-const identifyPersona = (title) => {
+const identifyPersona = (title: string) => {
 	if (title.includes('林霁') || title.includes('山中无甲子') || title.includes('思考') || title.includes('边界')) {
 		return { name: 'Lin', fullName: '林霁', color: 'bg-blue-100 dark:bg-blue-900/30 border-blue-300', accent: 'text-blue-600' };
 	} else if (title.includes('陈然') || title.includes('技术') || title.includes('分析') || title.includes('逻辑')) {
@@ -38,7 +47,7 @@ const persona = identifyPersona(title);
 			{content}
 		</h1>
 		<p class={clsx('w-full text-end font-medium text-sm', persona.accent)}>
-			<FormattedDate date={pubDate} />
+			<FormattedDate date={String(pubDate)} />
 		</p>
 	</article>
 </a>
