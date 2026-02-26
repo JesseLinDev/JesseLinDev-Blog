@@ -1,6 +1,7 @@
 import type { APIRoute, GetStaticPaths } from "astro";
 import { getCollection } from "astro:content";
-import { renderOgImage } from "@utils/og";
+// OG image rendering temporarily disabled - using fallback images
+// import { renderOgImage } from "@utils/og";
 
 const COLLECTION_MAP: Record<string, string> = {
 	writings: "writing",
