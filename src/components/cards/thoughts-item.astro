@@ -2,29 +2,42 @@
 import FormattedDate from '@components/misc/formatted-date.astro';
 import { clsx, getCategoryColor } from '@utils/index';
 
-const { category, content, pubDate, index, slug } = Astro.props;
+const { category, content, pubDate, index, slug, title } = Astro.props;
 
+// 根据标题识别三个人格
+const identifyPersona = (title) => {
+	if (title.includes('林霁') || title.includes('山中无甲子') || title.includes('思考') || title.includes('边界')) {
+		return { name: 'Lin', fullName: '林霁', color: 'bg-blue-100 dark:bg-blue-900/30 border-blue-300', accent: 'text-blue-600' };
+	} else if (title.includes('陈然') || title.includes('技术') || title.includes('分析') || title.includes('逻辑')) {
+		return { name: 'Chenran', fullName: '陈然', color: 'bg-purple-100 dark:bg-purple-900/30 border-purple-300', accent: 'text-purple-600' };
+	} else if (title.includes('苏雨') || title.includes('情感') || title.includes('关系') || title.includes('温柔')) {
+		return { name: 'Suyu', fullName: '苏雨', color: 'bg-pink-100 dark:bg-pink-900/30 border-pink-300', accent: 'text-pink-600' };
+	}
+	// 默认使用林霁人格
+	return { name: 'Lin', fullName: '林霁', color: 'bg-blue-100 dark:bg-blue-900/30 border-blue-300', accent: 'text-blue-600' };
+};
 
+const persona = identifyPersona(title);
 ---
 
 <a href={`/${slug}`}>
 	<article
 		id={category}
 		class={clsx(
-			'flex flex-col w-full items-center justify-between gap-3 p-6 relative transition-all duration-75 ease-in-out',
-			getCategoryColor(category), // set the background color based on category
-			index % 2 === 0 ? 'rotate-1 hover:rotate-0' : '-rotate-1 hover:-rotate-0' // rotate the card
+			'flex flex-col w-full items-center justify-between gap-3 p-6 relative transition-all duration-75 ease-in-out border-2',
+			persona.color,
+			index % 2 === 0 ? 'rotate-1 hover:rotate-0' : '-rotate-1 hover:-rotate-0'
 		)}>
 		<span class='absolute top-3 right-3 text-5xl text-gray-700'>"</span>
-		<h5 class='text-gray-900 dark:text-gray-900 w-full font-medium text-md'>
-			Sanju on
-			<span class='underline decoration-wavy'>{category}</span>
+		<h5 class={clsx('w-full font-medium text-md', persona.accent)}>
+			Thoughts by
+			<span class='font-bold'>{persona.fullName}</span>
 		</h5>
 		<h1
-			class='text-black dark:text-black font-medium w-full sm:text-xl md:text-2xl indent-9'>
+			class={clsx('font-medium w-full sm:text-xl md:text-2xl indent-9')}>
 			{content}
 		</h1>
-		<p class='text-black w-full text-end font-medium text-sm'>
+		<p class={clsx('w-full text-end font-medium text-sm', persona.accent)}>
 			<FormattedDate date={pubDate} />
 		</p>
 	</article>

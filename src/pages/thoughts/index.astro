@@ -11,11 +11,11 @@ const thoughts = (await getCollection("thought")).sort(
 ---
 
 <!doctype html>
-<html lang='en'>
+<html lang='zh-CN'>
 	<head>
 		<BaseHead
-			title="thoughts"
-			description="short-form thoughts on ai, design, product, and everything in between"
+			title="思考 | Jesse Lin"
+			description="不同人格的数字思考：林霁、陈然、苏雨的独特观点"
 		/>
 	</head>
 	<RootLayout>
@@ -23,15 +23,16 @@ const thoughts = (await getCollection("thought")).sort(
 			id='navbar+title'
 			class='flex flex-col w-full gap-6 max-w-xl'>
 			<Header />
-			<h1 class='w-full text-7xl font-medium tracking-tight mb-6'>thoughts</h1>
+			<h1 class='w-full text-7xl font-medium tracking-tight mb-6'>Thoughts</h1>
 
 			{
 				thoughts.map((thought, i) => (
 					<ThoughtsItem
 						category={thought.data.category}
 						content={thought.data.description}
-						pubDate={thought.data.pubDate}
+						index={i}
 						slug={thought.slug}
+						title={thought.data.title}
 						index={i}
 					/>
 				))
