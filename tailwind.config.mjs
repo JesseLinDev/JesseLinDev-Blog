@@ -4,6 +4,10 @@ export default {
 	darkMode: 'class',
 	theme: {
 		extend: {
+			fontFamily: {
+				'sans': ['Inter', 'Noto Sans SC', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+				'mono': ['JetBrains Mono', 'Fira Code', 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', 'Consolas', 'Courier New', 'monospace'],
+			},
 			colors: {
 				surface: {
 					DEFAULT: 'var(--color-bg)',
