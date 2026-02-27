@@ -36,8 +36,8 @@ if (!writing && !thought) return Astro.redirect('/404');
 const post = writing ?? thought;
 const { Content } = await post!.render();
 const readingTime = getReadingTime(post!.body);
-const heroImage = writing ? (writing.data.heroImage || `/og/writings/${slug}`) : undefined;
-const ogImage = thought ? `/og/thoughts/${slug}` : undefined;
+const heroImage = writing ? (writing.data.heroImage || `/og/writings/${slug}.png`) : undefined;
+const ogImage = thought ? `/og/thoughts/${slug}.png` : undefined;
 ---
 
 {writing ? (
