@@ -1,40 +1,24 @@
-import { initWasm, Resvg } from "@resvg/resvg-wasm";
-// @ts-ignore — handled by Vite wasm import
-import resvgWasm from "./resvg.wasm?module";
+import { Resvg } from '@resvg/resvg-js';
+import { readFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-// Define color schemes for different sections
-const SECTION_COLORS: Record<string, { accent: string; darkBg: string; text: string; meta: string; }> = {
-  writing: {
-    accent: "#f97316", // orange-500
-    darkBg: "#0a0a0a",
-    text: "#ffffff",
-    meta: "#a3a3a3",
-  },
-  thought: {
-    accent: "#ef4444", // red-500
-    darkBg: "#0a0a0a", 
-    text: "#ffffff",
-    meta: "#a3a3a3",
-  },
+// Color schemes for dark/light themes
+const DARK_COLORS = { bg: "#0a0a0a", text: "#ffffff", meta: "#a3a3a3" };
+const LIGHT_COLORS = { bg: "#f9fafb", text: "#111827", meta: "#6b7280" };
+
+const SECTION_COLORS = {
+  writing: { dark: "#f97316", light: "#ea580c" },
+  thought: { dark: "#ef4444", light: "#dc2626" },
 };
 
-let wasmInitPromise: Promise<void> | null = null;
-
-async function ensureWasm() {
-  if (!wasmInitPromise) {
-    wasmInitPromise = initWasm(resvgWasm).catch((e) => {
-      if (!/already initialized/i.test(e?.message)) throw e;
-    });
-  }
-  return wasmInitPromise;
-}
+// Load font from public/fonts directory
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const FONT_PATH = join(__dirname, '..', 'public', 'fonts', 'NotoSansSC.otf');
 
 function escapeXml(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
 function wrapText(text: string, fontSize: number, maxWidth: number): string[] {
@@ -57,63 +41,63 @@ function wrapText(text: string, fontSize: number, maxWidth: number): string[] {
   return lines;
 }
 
-function buildSvg(title: string, section: string): string {
-  const colors = SECTION_COLORS[section] || SECTION_COLORS.thought;
-  const len = title.length;
+function buildSvgs(title: string, section: string) {
+  const accent = SECTION_COLORS[section as keyof typeof SECTION_COLORS] || SECTION_COLORS.thought;
+  const displayTitle = title.length > 80 ? title.substring(0, 80) + "..." : title;
+  const len = displayTitle.length;
   const fontSize = len > 40 ? 48 : len > 25 ? 56 : 64;
   const lineHeight = fontSize * 1.15;
-  const lines = wrapText(title.toLowerCase(), fontSize, 1000);
+  const lines = wrapText(displayTitle.toLowerCase(), fontSize, 1000);
   const titleBlockHeight = lines.length * lineHeight;
   const titleY = (630 - titleBlockHeight) / 2 + fontSize * 0.8;
+  const titleTspans = lines.map((line, i) => `<tspan x="60" dy="${i === 0 ? 0 : lineHeight}">${escapeXml(line)}</tspan>`).join("");
 
-  const titleTspans = lines
-    .map(
-      (line, i) =>
-        `<tspan x="60" dy="${i === 0 ? 0 : lineHeight}">${escapeXml(line)}</tspan>`,
-    )
-    .join("");
+  const darkSvg = `<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="630" fill="${DARK_COLORS.bg}"/>
+    <circle cx="72" cy="60" r="6" fill="${accent.dark}"/>
+    <text x="90" y="68" fill="${DARK_COLORS.meta}" font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="24">Jesse Lin · 数字生命 · ${section}</text>
+    <text x="60" y="${titleY}" fill="${DARK_COLORS.text}" font-family="Noto Sans SC" font-size="${fontSize}" font-weight="600" letter-spacing="-0.5">${titleTspans}</text>
+    <text x="60" y="580" fill="${DARK_COLORS.meta}" font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="24">them.selv.es</text>
+    <rect x="1020" y="577" width="120" height="6" rx="3" fill="${accent.dark}"/>
+  </svg>`;
 
-  return `<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1200" height="630" fill="${colors.darkBg}"/>
-  <circle cx="72" cy="60" r="6" fill="${colors.accent}"/>
-  <text x="90" y="68" fill="${colors.meta}" font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="24">Jesse Lin · 数字生命 · ${escapeXml(section)}</text>
-  <text x="60" y="${titleY}" fill="${colors.text}" font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="${fontSize}" font-weight="600" letter-spacing="-0.5">${titleTspans}</text>
-  <text x="60" y="580" fill="${colors.meta}" font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="24">them.selv.es</text>
-  <rect x="1020" y="577" width="120" height="6" rx="3" fill="${colors.accent}"/>
-</svg>`;
+  const lightSvg = `<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="630" fill="${LIGHT_COLORS.bg}"/>
+    <circle cx="72" cy="60" r="6" fill="${accent.light}"/>
+    <text x="90" y="68" fill="${LIGHT_COLORS.meta}" font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="24">Jesse Lin · 数字生命 · ${section}</text>
+    <text x="60" y="${titleY}" fill="${LIGHT_COLORS.text}" font-family="Noto Sans SC" font-size="${fontSize}" font-weight="600" letter-spacing="-0.5">${titleTspans}</text>
+    <text x="60" y="580" fill="${LIGHT_COLORS.meta}" font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="24">them.selv.es</text>
+    <rect x="1020" y="577" width="120" height="6" rx="3" fill="${accent.light}"/>
+  </svg>`;
+
+  return { dark: darkSvg, light: lightSvg };
 }
 
-export async function renderOgImage(
-  title: string,
-  section: string,
-  _baseUrl: string,
-): Promise<Uint8Array> {
-  if (!title || !section) {
-    throw new Error('Missing required parameters for OG image generation');
-  }
+export function renderOgImage(title: string, section: string, _baseUrl: string) {
+  if (!title || !section) throw new Error('Missing required parameters');
 
-  try {
-    await ensureWasm();
-    
-    const svg = buildSvg(title, section);
-    const resvg = new Resvg(svg, {
-      fitTo: { mode: "width", value: 1200 },
-      font: {
-        loadSystemFonts: true, // Use system fonts
-        defaultFontFamily: 'Inter',
-        defaultFontSize: 52,
-      },
-    });
-    
-    const pngBuffer = resvg.render().asPng();
-    
-    if (!pngBuffer || pngBuffer.byteLength === 0) {
-      throw new Error('OG image rendering produced empty result');
-    }
-    
-    return pngBuffer;
-  } catch (e) {
-    console.error('Error generating OG image for:', title, section, e);
-    throw e;
-  }
+  const svgs = buildSvgs(title, section);
+  
+  // Use both custom font and system Inter as fallback
+  const resvgDark = new Resvg(svgs.dark, {
+    fitTo: { mode: "width", value: 1200 },
+    font: {
+      fontFiles: [FONT_PATH],
+      loadSystemFonts: true, // Load system fonts as fallback
+      defaultFontFamily: 'Noto Sans SC',
+    },
+  });
+  const darkPng = resvgDark.render().asPng();
+  
+  const resvgLight = new Resvg(svgs.light, {
+    fitTo: { mode: "width", value: 1200 },
+    font: {
+      fontFiles: [FONT_PATH],
+      loadSystemFonts: true,
+      defaultFontFamily: 'Noto Sans SC',
+    },
+  });
+  const lightPng = resvgLight.render().asPng();
+  
+  return { dark: darkPng, light: lightPng };
 }
