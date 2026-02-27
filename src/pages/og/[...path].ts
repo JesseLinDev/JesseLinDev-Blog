@@ -14,8 +14,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
 		try {
 			const posts = await getCollection(collectionName as any);
 			for (const post of posts) {
+				// 生成深色和浅色两套OG图片
 				paths.push({
 					params: { path: `${section}/${(post as any).slug}.png` }
+				});
+				paths.push({
+					params: { path: `${section}/${(post as any).slug}-light.png` }
 				});
 			}
 		} catch (e) {
@@ -33,7 +37,8 @@ export const GET: APIRoute = async ({ params, request }) => {
 		const path = params.path || "";
 		const [section, ...rest] = path.split("/");
 		const slugWithExt = rest.join("/");
-		const slug = slugWithExt.replace(/\.png$/, "");
+		const isLight = slugWithExt.endsWith("-light.png");
+		const slug = slugWithExt.replace(/(-light)?\.png$/, "");
 
 		const collectionName = COLLECTION_MAP[section];
 		if (!collectionName || !slug) return Response.redirect(fallback, 302);
@@ -44,9 +49,11 @@ export const GET: APIRoute = async ({ params, request }) => {
 			| undefined;
 		if (!post) return Response.redirect(fallback, 302);
 
-		// 生成OG图片
+		// 生成OG图片（深色和浅色两套）
 		const baseUrl = request.url;
-		const pngBuffer = await renderOgImage(post.data.title, collectionName, baseUrl);
+		const pngBuffers = renderOgImage(post.data.title, collectionName, baseUrl);
+		
+		const pngBuffer = isLight ? pngBuffers.light : pngBuffers.dark;
 
 		return new Response(pngBuffer.buffer as ArrayBuffer, {
 			headers: {

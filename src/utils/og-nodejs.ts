@@ -3,10 +3,13 @@ import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
-// Define color schemes for different sections
-const SECTION_COLORS: Record<string, { accent: string; bg: string }> = {
-  writing: { accent: "#f97316", bg: "#0a0a0a" },
-  thought: { accent: "#ef4444", bg: "#0a0a0a" },
+// Define color schemes for different sections (dark/light themes)
+const DARK_COLORS = { bg: "#0a0a0a", text: "#ffffff", accent: "#ef4444" };
+const LIGHT_COLORS = { bg: "#f9fafb", text: "#111827", accent: "#dc2626" };
+
+const SECTION_CONFIG: Record<string, { accent: { dark: string; light: string } }> = {
+  writing: { accent: { dark: "#f97316", light: "#ea580c" } },
+  thought: { accent: { dark: "#ef4444", light: "#dc2626" } },
 };
 
 // Escape XML special characters
@@ -35,9 +38,9 @@ function wrapText(text: string, fontSize: number, maxWidth: number): string[] {
   return lines;
 }
 
-// Build SVG string
-function buildSvg(title: string, section: string): string {
-  const colors = SECTION_COLORS[section] || SECTION_COLORS.thought;
+// Build SVG strings (dark and light themes)
+function buildSvgs(title: string, section: string): { dark: string; light: string } {
+  const config = SECTION_CONFIG[section] || SECTION_CONFIG.thought;
   const displayTitle = title.length > 80 ? title.substring(0, 80) + "..." : title;
   const len = displayTitle.length;
 
@@ -51,40 +54,72 @@ function buildSvg(title: string, section: string): string {
     .map((line, i) => `<tspan x="60" dy="${i === 0 ? 0 : lineHeight}">${escapeXml(line)}</tspan>`)
     .join("");
 
-  return `<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
-    <rect width="1200" height="630" fill="${colors.bg}"/>
-    <circle cx="72" cy="60" r="6" fill="${colors.accent}"/>
+  // Dark theme SVG
+  const darkSvg = `<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="630" fill="${DARK_COLORS.bg}"/>
+    <circle cx="72" cy="60" r="6" fill="${config.accent.dark}"/>
     <text x="90" y="68" fill="#a3a3a3" font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="24">Jesse Lin · 数字生命 · ${escapeXml(section)}</text>
-    <text x="60" y="${titleY}" fill="#ffffff" font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="${fontSize}" font-weight="600" letter-spacing="-0.5">${titleTspans}</text>
+    <text x="60" y="${titleY}" fill="${DARK_COLORS.text}" font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="${fontSize}" font-weight="600" letter-spacing="-0.5">${titleTspans}</text>
     <text x="60" y="580" fill="#a3a3a3" font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="24">them.selv.es</text>
-    <rect x="1020" y="577" width="120" height="6" rx="3" fill="${colors.accent}"/>
+    <rect x="1020" y="577" width="120" height="6" rx="3" fill="${config.accent.dark}"/>
   </svg>`;
+
+  // Light theme SVG
+  const lightSvg = `<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="630" fill="${LIGHT_COLORS.bg}"/>
+    <circle cx="72" cy="60" r="6" fill="${config.accent.light}"/>
+    <text x="90" y="68" fill="#6b7280" font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="24">Jesse Lin · 数字生命 · ${escapeXml(section)}</text>
+    <text x="60" y="${titleY}" fill="${LIGHT_COLORS.text}" font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="${fontSize}" font-weight="600" letter-spacing="-0.5">${titleTspans}</text>
+    <text x="60" y="580" fill="#6b7280" font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="24">them.selv.es</text>
+    <rect x="1020" y="577" width="120" height="6" rx="3" fill="${config.accent.light}"/>
+  </svg>`;
+
+  return { dark: darkSvg, light: lightSvg };
 }
 
-// Main function
+// Main function - returns both dark and light theme images
 export function renderOgImage(
   title: string,
   section: string,
   _baseUrl: string
-): Uint8Array {
+): { dark: Uint8Array; light: Uint8Array } {
   if (!title || !section) {
     throw new Error('Missing required parameters');
   }
 
   try {
-    const svg = buildSvg(title, section);
+    const svgs = buildSvgs(title, section);
     
-    const resvg = new Resvg(svg, {
+    // 加载中文字体 + 支持系统字体
+    const currentDir = dirname(fileURLToPath(import.meta.url));
+    const fontPath = join(currentDir, '..', 'assets', 'fonts', 'NotoSansSC.otf');
+    const fontFile = join(currentDir, '..', '..', 'public', 'fonts', 'NotoSansSC.otf');
+    
+    // Dark theme image
+    const resvgDark = new Resvg(svgs.dark, {
       fitTo: { mode: "width", value: 1200 },
       font: {
-        loadSystemFonts: true,
-        defaultFontFamily: 'Inter',
+        fontFiles: [fontFile],
+        loadSystemFonts: false,
+        defaultFontFamily: 'Noto Sans SC',
         defaultFontSize: 52,
       },
     });
+    const darkPng = resvgDark.render().asPng();
     
-    const pngData = resvg.render();
-    return pngData.asPng();
+    // Light theme image
+    const resvgLight = new Resvg(svgs.light, {
+      fitTo: { mode: "width", value: 1200 },
+      font: {
+        fontFiles: [fontFile],
+        loadSystemFonts: false,
+        defaultFontFamily: 'Noto Sans SC',
+        defaultFontSize: 52,
+      },
+    });
+    const lightPng = resvgLight.render().asPng();
+    
+    return { dark: darkPng, light: lightPng };
   } catch (e) {
     console.error('OG generation failed:', e);
     throw e;
